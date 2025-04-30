@@ -2,8 +2,8 @@
 
 A responsive, high-performance grid background with smooth hover effects—implemented in WebGL (Three.js) on desktop and a simple Canvas fallback on mobile.
 
-<img width="1000" alt="image" src="https://github.com/user-attachments/assets/95f1c9eb-66b6-4b00-a3b2-14fa652de720" />
-<img width="1000" alt="image" src="https://github.com/user-attachments/assets/fd4748ae-16f1-4b36-a9b9-0f5d4d813040" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/95f1c9eb-66b6-4b00-a3b2-14fa652de720" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/fd4748ae-16f1-4b36-a9b9-0f5d4d813040" />
 
 ---
 
