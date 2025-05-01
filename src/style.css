@@ -27,7 +27,7 @@ body
 h1 {
     font-size: 7.5vw;
     letter-spacing: -0.02em;
-    font-family: inter;
+    font-family: 'Inter', sans-serif;
     text-align: center;
     color: black;
 }

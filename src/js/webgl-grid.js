@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import Stats from 'stats.js'
+// import Stats from 'stats.js'
 import GUI from 'lil-gui'
 import borderVertexShader from '../shaders/border/vertex.glsl'
 import borderFragmentShader from '../shaders/border/fragment.glsl'
@@ -40,11 +40,15 @@ export default class WebGLGrid {
     setDebug() {
         // check of "debug mode" aanstaat
         const debug = window.location.hash === '#debug'
-        this.stats = new Stats()
-        this.stats.showPanel(0)
-        document.body.appendChild(this.stats.dom)
+        // Check of Stats beschikbaar is voordat je het gebruikt
 
         if (debug) {
+            if (window.Stats || typeof Stats !== 'undefined') {
+                this.stats = new Stats()
+                this.stats.showPanel(0) // 0: fps, 1: ms, 2: memory
+                document.body.appendChild(this.stats.dom)
+            }
+
             this.gui = new GUI()
             const folder = this.gui.addFolder('settings')
             folder.add(this.properties, 'centerDecay', 0, 2, 0.01).name('Center Decay')
@@ -179,28 +183,30 @@ export default class WebGLGrid {
         this.holdTimes[id] = decayTime
     }
 
-    highlightNeighbours(col, row) {
-        const deltas = [
-            [1, 0], // rechts
-            [-1, 0], // links
-            [0, 1], // onder
-            [0, -1], // boven
-        ]
-        for (const [dx, dy] of deltas) {
-            // n = neighbour, c = column, r = row
-            const nc = col + dx
-            const nr = row + dy
+    // save for later if needed
 
-            // check of binnen bereik
-            if (nc < 0 || nc >= this.cols || nr < 0 || nr >= this.rows) continue
+    // highlightNeighbours(col, row) {
+    //     const deltas = [
+    //         [1, 0], // rechts
+    //         [-1, 0], // links
+    //         [0, 1], // onder
+    //         [0, -1], // boven
+    //     ]
+    //     for (const [dx, dy] of deltas) {
+    //         // n = neighbour, c = column, r = row
+    //         const nc = col + dx
+    //         const nr = row + dy
 
-            // checken waar de neighbour cell id is
-            const nid = nr * this.cols + nc
-            if (this.holdTimes[nid] <= 0) { // als geen hold -> highlight
-                this.highlightCell(nid, this.properties.neighbourDecay)
-            }
-        }
-    }
+    //         // check of binnen bereik
+    //         if (nc < 0 || nc >= this.cols || nr < 0 || nr >= this.rows) continue
+
+    //         // checken waar de neighbour cell id is
+    //         const nid = nr * this.cols + nc
+    //         if (this.holdTimes[nid] <= 0) { // als geen hold -> highlight
+    //             this.highlightCell(nid, this.properties.neighbourDecay)
+    //         }
+    //     }
+    // }
 
     highlightRandomNeighbours(col, row) {
         // loop dx,dy van -1..+1 om de 3×3 omgeving te doorlopen
@@ -258,7 +264,8 @@ export default class WebGLGrid {
     }
 
     animate() {
-        this.stats.begin()
+        if (this.stats)
+            this.stats.begin()
 
         if (!this.clock) this.clock = new THREE.Clock() // lazy initialization
         let delta = this.clock.getDelta() // delta in secondes
@@ -276,7 +283,9 @@ export default class WebGLGrid {
 
         this.renderer.render(this.scene, this.camera)
 
-        this.stats.end()
+        if (this.stats)
+            this.stats.end()
+
         requestAnimationFrame(() => this.animate())
     }
 }
