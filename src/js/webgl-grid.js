@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-// import Stats from 'stats.js'
+import Stats from 'stats.js'
 import GUI from 'lil-gui'
 import borderVertexShader from '../shaders/border/vertex.glsl'
 import borderFragmentShader from '../shaders/border/fragment.glsl'
