@@ -1,4 +1,3 @@
-// fragment.glsl
 precision highp float;
 
 uniform vec3  fillColor;
@@ -16,41 +15,35 @@ varying vec2  vUv;
 varying float vHover;
 
 void main() {
-    // 1) Bereken rand-dikte in UV‐eenheden
+    // 1) Bereken rand‐dikte in UV‐eenheden
     float cellPx = resolution.x / cols;
     float bw     = borderWidthPx / cellPx;
 
-    // 2) Bepaal of we in het interior zitten
-    float interior = step(bw, vUv.x)
-                   * step(bw, vUv.y)
-                   * step(bw, 1.0 - vUv.x)
-                   * step(bw, 1.0 - vUv.y);
+    // 2) anti-alias factor (in UV-ruimtes)
+    float aa = fwidth(vUv.x);
 
-    // 3) Basiskleur (border of fill)
+    // 3) zachte interior-mask in plaats van vier harde steps
+    float left   = smoothstep(bw - aa, bw + aa, vUv.x);
+    float right  = smoothstep(bw - aa, bw + aa, 1.0 - vUv.x);
+    float bottom = smoothstep(bw - aa, bw + aa, vUv.y);
+    float top    = smoothstep(bw - aa, bw + aa, 1.0 - vUv.y);
+    float interior = left * bottom * right * top;
+
+    // 4) basis kleur
     vec3 bCol = mix(borderColor, highlightColor, vHover);
     vec3 col  = mix(bCol, fillColor, interior);
 
-    // 4) Inner‐shadow alleen op hovered interior
+    // 5) inner-shadow zoals voorheen
     if (vHover > 0.5 && interior > 0.0) {
-        // afstand tot de dichtstbijzijnde rand (in UV)
         float dist = min(
             min(vUv.x, vUv.y),
             min(1.0 - vUv.x, 1.0 - vUv.y)
         );
-
-        // zone over which the shadow fades
         float zone = bw * shadowZone;
-
-        // normalize distance into [0,1]
-        float t = clamp((dist - bw) / zone, 0.0, 1.0);
+        float t    = clamp((dist - bw) / zone, 0.0, 1.0);
         float falloff = pow(t, 0.3);
-
-        // bepaal minimale brightness op rand
         float minBright = 1.0 - shadowIntensity;
-        // mix‐factor voor blend
         float mixF = mix(minBright, 1.0, falloff);
-
-        // 5) blend tussen shadowColor en de bestaande color
         col = mix(shadowColor, col, mixF);
     }
 

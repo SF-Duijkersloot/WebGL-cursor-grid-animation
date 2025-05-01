@@ -10,6 +10,8 @@ export default class WebGLGrid {
 
         this.properties = {
             gridBreakpoints: [
+                { minWidth: 1900, cols: 36 },
+                { minWidth: 1600, cols: 32 },
                 { minWidth: 1200, cols: 28 },
                 { minWidth: 768, cols: 22 },
                 { minWidth: 0, cols: 12 },
@@ -24,6 +26,7 @@ export default class WebGLGrid {
             maxInstances: 28 * 28 * 2,
             shadowZone: 10,
             shadowIntensity: 0.1,
+            borderWidth: 0.5,
         }
 
         this.setDebug()
@@ -57,6 +60,7 @@ export default class WebGLGrid {
             const uniforms = this.gui.addFolder('uniforms')
             uniforms.add(this.properties, 'shadowZone', 0, 100, 1).name('Shadow Zone').onChange(v => this.material.uniforms.shadowZone.value = v)
             uniforms.add(this.properties, 'shadowIntensity', 0, 1, 0.01).name('Shadow Intensity').onChange(v => this.material.uniforms.shadowIntensity.value = v)
+            uniforms.add(this.properties, 'borderWidth', 0, 10, 0.1).name('Border Width').onChange(v => this.material.uniforms.borderWidthPx.value = v * this.sizes.pixelRatio)
         }
     }
 
